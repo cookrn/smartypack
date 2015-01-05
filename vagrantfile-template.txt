@@ -1,0 +1,6 @@
+Vagrant.configure(
+  defined?(VAGRANTFILE_API_VERSION) ? VAGRANTFILE_API_VERSION : "2"
+) do |config|
+  config.ssh.username = "root"
+  config.vm.synced_folder ".", "/vagrant", :disabled => true
+end

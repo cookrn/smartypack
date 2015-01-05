@@ -1,0 +1,6 @@
+output-virtualbox-iso
+packer_cache
+smartos-latest-USB.img
+smartos-latest.iso
+smartos-latest.vmdk
+smartos-virtualbox.box

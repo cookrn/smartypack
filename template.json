@@ -1,0 +1,70 @@
+{
+  "variables": {
+    "smartos_iso_md5":            null
+  , "smartos_root_password":      "vagrant"
+  , "smartos_storage_pool_disks": "c0t0d0"
+  }
+
+, "builders": [
+    {
+      "type": "virtualbox-iso"
+
+    , "boot_command": [
+        "y<enter><wait>"
+      , "dhcp<enter><wait>"
+      , "{{user `smartos_storage_pool_disks`}}<enter><wait>"
+      , "{{user `smartos_root_password`}}<enter><wait>"
+      , "{{user `smartos_root_password`}}<enter><wait>"
+      , "y<enter><wait5>"
+      , "n<enter><wait>"
+      , "y<enter>"
+      ]
+
+    , "boot_wait":            "45s"
+    , "format":               "ova"
+    , "guest_additions_mode": "disable"
+    , "guest_os_type":        "Solaris11_64"
+    , "hard_drive_interface": "sata"
+    , "headless":             true
+    , "iso_checksum":         "{{user `smartos_iso_md5`}}"
+    , "iso_checksum_type":    "md5"
+    , "iso_interface":        "sata"
+    , "iso_url":              "smartos-latest.iso"
+    , "shutdown_command":     "shutdown -y -g0 -i5"
+    , "ssh_username":         "root"
+    , "ssh_password":         "{{user `smartos_root_password`}}"
+    , "ssh_wait_timeout":     "5m"
+
+    , "vboxmanage": [
+        [ "modifyvm" , "{{.Name}}" , "--memory" , "1024" ]
+      ]
+
+    , "vboxmanage_post": [
+        [
+          "storageattach"
+        , "{{.Name}}"
+        , "--device"     , "0"
+        , "--medium"     , "smartos-latest.vmdk"
+        , "--port"       , "0"
+        , "--storagectl" , "IDE Controller"
+        , "--type"       , "hdd"
+        ]
+      ]
+    }
+  ]
+
+, "provisioners": [
+    {
+      "type":   "shell"
+    , "script": "bootstrap.sh"
+    }
+  ]
+
+, "post-processors": [
+    {
+      "type":                 "vagrant"
+    , "output":               "smartos-{{.Provider}}.box"
+    , "vagrantfile_template": "vagrantfile-template.txt"
+    }
+  ]
+}
